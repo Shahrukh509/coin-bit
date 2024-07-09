@@ -1,0 +1,1 @@
+{"_original":{"password":"admin12","username":"shah409"},"details":[{"context":{"key":"password","label":"password","regex":{},"value":"admin12"},"message":"\"password\" with value \"admin12\" fails to match the required pattern: /^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,25}$/","path":["password"],"type":"string.pattern.base"}],"level":"error"}
