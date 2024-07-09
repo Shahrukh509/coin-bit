@@ -10,20 +10,24 @@ const UserDTO = require('../dto/user');
 
 
 
+
 const authContoller = {
    
     async register(req,res,next){
-        
+
         const userRegisterSchema= Joi.object({
            username: Joi.string().min(5).max(30).required(),
            name: Joi.string().max(30).required(),
            email: Joi.string().email().required(),
-           password: Joi.string().pattern(passwordPattern).required(),
+           password: Joi.string().pattern(passwordPattern,{message: errorMessage}).required(),
            confirmPassword: Joi.ref('password')
         });
 
         const { error } = userRegisterSchema.validate(req.body);
-        if(error) return next(error);
+        if(error){
+            
+            return next(error);
+        }
 
         const { username,name,email,password } = req.body;
 
@@ -35,18 +39,23 @@ const authContoller = {
                     status: 409,
                     message: 'Email already registered, use another'
                 }
-                return next(error);
+                
+                return next(error);  
+                
+                
             }
             if(usernameInUse){
                 const error={
                     status: 409,
                     message: 'Username not available, use another'
                 }
+                
                 return next(error);
 
             }
 
         }catch(error){
+            
             return next(error);
 
         }
@@ -68,6 +77,7 @@ const authContoller = {
             refreshToken = JwtService.signRefreshToken({id: user._id},'60m');
 
         }catch(error){
+            
           return next(error);
         }
 
@@ -90,7 +100,7 @@ const authContoller = {
             password: Joi.string().pattern(passwordPattern)
         });
        const { error } = userLoginSchema.validate(req.body);
-       if(error) return next(error);
+       if(error) {  return next(error);}
 
        const {username,password} = req.body;
        let user;
@@ -100,9 +110,9 @@ const authContoller = {
         if(!user) {
             const error={
             status: 401,
-            message: 'Ivalid username or password'
+            message: 'Invalid username or password'
            };
-
+           
            return next(error);
         }
         const match = await bcrypt.compare(password,user.password);
@@ -111,12 +121,14 @@ const authContoller = {
             status: 401,
             message: 'Invalid password'
            };
+           
 
            return next(error);
         }
 
      }
        catch(error){
+        
         return next(error);
        }
 
@@ -215,7 +227,7 @@ const authContoller = {
                 httpOnly:true
             })
         }catch(e){
-
+            
             return next(e);
 
         }
